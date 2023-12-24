@@ -25,14 +25,16 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, "User not found. Invalid email"));
     const validPassword = bcrypt.compareSync(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, "Invalid password"));
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: hashedPassword, ...rest } = validUser._doc;
     console.log("rest🟥:", rest);
     console.log("hashedPassword🟩:", hashedPassword);
+
+    // Set the expiration time for the cookie (e.g., 1 day from now)
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1);
     res
-      .cookie("access_token", rest, { httpOnly: true })
+      .cookie("access_token", rest, { httpOnly: true, expires: expirationDate })
       .status(200)
       .json(validUser); // httpOnly: true means that the cookie is not accessible from the third party scripts
   } catch (error) {
