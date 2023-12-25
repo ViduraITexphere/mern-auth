@@ -11,10 +11,12 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, "client/dist")));
+// Serve static files from the "../client/dist" directory
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
+// Handle all other routes by sending the "index.html" file
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
 mongoose
